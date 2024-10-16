@@ -1,4 +1,4 @@
-package domain.model;
+package co.edu.unicauca.microserviciousuarios.domain.model;
 
 public interface IUserRepository {
     User createUser(User userToCreate);

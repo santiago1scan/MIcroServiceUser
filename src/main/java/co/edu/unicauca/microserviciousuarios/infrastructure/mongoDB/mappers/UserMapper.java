@@ -1,7 +1,7 @@
-package infrastructure.repositories.mongoDB.mappers;
+package co.edu.unicauca.microserviciousuarios.infrastructure.mongoDB.mappers;
 
-import domain.model.User;
-import infrastructure.repositories.mongoDB.documents.UserDocument;
+import co.edu.unicauca.microserviciousuarios.domain.model.User;
+import co.edu.unicauca.microserviciousuarios.infrastructure.mongoDB.documents.UserDocument;
 
 public class UserMapper {
     public static User toUser(UserDocument userD){

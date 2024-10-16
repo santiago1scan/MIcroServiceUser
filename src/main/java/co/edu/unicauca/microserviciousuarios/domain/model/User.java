@@ -1,4 +1,4 @@
-package domain.model;
+package co.edu.unicauca.microserviciousuarios.domain.model;
 
 public class User {
     private String id;
@@ -15,6 +15,9 @@ public class User {
         this.password = password;
         this.address = address;
         this.phone = phone;
+    }
+    public User(){
+
     }
 
     public String getId() {

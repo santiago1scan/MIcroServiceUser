@@ -1,4 +1,4 @@
-package presentation.dto;
+package co.edu.unicauca.microserviciousuarios.presentation.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,5 +15,6 @@ public class UserDTO {
     private String address;
     private int phone;
 
+    public UserDTO() {}
 
 }

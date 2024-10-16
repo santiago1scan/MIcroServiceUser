@@ -1,12 +1,12 @@
-package aplication;
+package co.edu.unicauca.microserviciousuarios.aplication;
 
 
-import domain.model.IUserRepository;
-import domain.model.User;
+import co.edu.unicauca.microserviciousuarios.domain.model.IUserRepository;
+import co.edu.unicauca.microserviciousuarios.domain.model.User;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import presentation.dto.UserDTO;
+import co.edu.unicauca.microserviciousuarios.presentation.dto.UserDTO;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -19,6 +19,7 @@ public class UserServices{
     @Autowired
     private ModelMapper modelMapper;
 
+    @Autowired
     public UserServices(IUserRepository repository, ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
         this.repository = repository;
