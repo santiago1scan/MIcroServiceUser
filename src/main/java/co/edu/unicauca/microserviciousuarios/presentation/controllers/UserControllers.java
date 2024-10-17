@@ -1,7 +1,6 @@
 package co.edu.unicauca.microserviciousuarios.presentation.controllers;
 
 import co.edu.unicauca.microserviciousuarios.aplication.UserServices;
-import co.edu.unicauca.microserviciousuarios.domain.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,27 +19,27 @@ public class UserControllers {
         if(userDTO.getName().isEmpty())
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
-                    .body("name no puede estar vacio");
+                    .body("name cant be empty");
         if(userDTO.getPassword() == null)
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
-                    .body("password es necesaria y mayor a 8 caracteres");
+                    .body("password is needed");
         if(userDTO.getPassword().isEmpty() || userDTO.getPassword().length() < 8)
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
-                    .body("password es necesaria y mayor a 8 caracteres");
+                    .body("password is needed y and more than 7 characters");
         if(userDTO.getEmail().isEmpty())
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
-                    .body("El email es necesario");
+                    .body("The email is needed");
         if(userDTO.getAddress().isEmpty())
             return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body("El address es necesario");
+                .body("The address is needed");
         if(userDTO.getPhone() <100)
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
-                    .body("Phone es olbigatorio y valido");
+                    .body("Phone number is needed");
         if(userDTO.getRol().isEmpty())
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
@@ -55,7 +54,7 @@ public class UserControllers {
         if(createdUser == null)
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Hubo un problema al crear el usuario");
+                    .body("Sorry, some issue creating user");
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
 
@@ -80,7 +79,15 @@ public class UserControllers {
         if(userUpdated == null)
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
-                    .body("No se pudo actualizar el usuario");
+                    .body("sorry, we cant update the user");
         return ResponseEntity.status(HttpStatus.OK).body(userUpdated);
+    }
+
+    @DeleteMapping("/{idUser}")
+    public ResponseEntity<Object> deleteUser(@PathVariable String idUser) {
+        UserDTO userDTO = userServices.deleteUser(idUser);
+        if( userDTO == null)
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return ResponseEntity.status(HttpStatus.OK).body(userDTO);
     }
 }

@@ -9,18 +9,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
-public class UserRepositoyMongo implements IUserRepository {
+public class UserRepositoryMongo implements IUserRepository {
 
     private final MongoRespositoryUser mongoRepository;
     private final MongoTemplate mongoTemplate;
     @Autowired
-    public UserRepositoyMongo(MongoRespositoryUser mongoRepository, MongoTemplate mongoTemplate){
+    public UserRepositoryMongo(MongoRespositoryUser mongoRepository, MongoTemplate mongoTemplate){
         this.mongoRepository = mongoRepository;
         this.mongoTemplate = mongoTemplate;
     }
@@ -39,7 +38,7 @@ public class UserRepositoyMongo implements IUserRepository {
     @Override
     public User findUserById(String id){
         UserDocument userFounded = mongoRepository.findById(id).orElse(null);
-        if(userFounded==null)
+        if(userFounded==null || !userFounded.isActive())
             return null;
         return UserMapper.toUser(userFounded);
     }
@@ -47,41 +46,44 @@ public class UserRepositoyMongo implements IUserRepository {
     public User updateUserById(String id, User newUser){
         Optional<UserDocument> userOptional = mongoRepository.findById(id);
 
-        if(!userOptional.isPresent())
+        if(userOptional.isEmpty())
             throw new RuntimeException("User not found");
 
         UserDocument userDocument = userOptional.get();
 
-        if(!newUser.getName().equals(""))
+        if(newUser.getName() !=null && !newUser.getName().isEmpty())
             userDocument.setName(newUser.getName());
-        if(!newUser.getEmail().equals(""))
+        if(newUser.getEmail() !=null && !newUser.getEmail().isEmpty())
             userDocument.setEmail(newUser.getEmail());
-        if(!newUser.getPassword().equals(""))
+        if(newUser.getPassword() !=null && !newUser.getPassword().isEmpty())
             userDocument.setPassword(newUser.getPassword());
-        if(!newUser.getAddress().equals(""))
+        if( newUser.getAddress() !=null && !newUser.getAddress().isEmpty())
             userDocument.setAddress(newUser.getAddress());
         if(newUser.getPhone() != 0)
             userDocument.setPhone(newUser.getPhone());
 
         UserDocument updatedUser = mongoRepository.save(userDocument);
         return UserMapper.toUser(updatedUser);
-    };
+    }
     @Override
     public User deleteUserById(String id){
         Optional<UserDocument> userOptional = mongoRepository.findById(id);
 
-        if(!userOptional.isPresent())
+        if(userOptional.isEmpty())
             throw new RuntimeException("User not found");
 
-        mongoRepository.deleteById(id);
+        UserDocument userDocument = userOptional.get();
+        userDocument.setActive(false);
 
-        return UserMapper.toUser(userOptional.get());
+        UserDocument userDeleted = mongoRepository.save(userDocument);
+
+        return UserMapper.toUser(userDeleted);
     }
     @Override
     public User loginUser(String email, String password ){
         Query query = new Query();
 
-        query.addCriteria(Criteria.where("email").is(email).and("paddword").is(password));
+        query.addCriteria(Criteria.where("email").is(email).and("password").is(password));
 
         UserDocument userDocument = mongoTemplate.findOne(query, UserDocument.class);
 

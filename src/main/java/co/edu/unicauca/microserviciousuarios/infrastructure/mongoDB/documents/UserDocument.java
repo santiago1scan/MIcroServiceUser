@@ -22,8 +22,6 @@ public class UserDocument {
     private String rol;
     private int phone;
     private boolean isActive;
-
-
     
     public UserDocument(){
 
