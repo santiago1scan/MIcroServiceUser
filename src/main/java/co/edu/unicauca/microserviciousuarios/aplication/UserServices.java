@@ -18,8 +18,6 @@ public class UserServices{
 
     @Autowired
     private ModelMapper modelMapper;
-    @Autowired
-    private co.edu.unicauca.microserviciousuarios.presentation.mapper.mapper mapper;
 
     @Autowired
     public UserServices(IUserRepository repository, ModelMapper modelMapper) {
@@ -29,8 +27,8 @@ public class UserServices{
 
     /**
      *
-     * @param idUserToFind
-     * @return UserDTO, if is succesfully return UserDTO find, else, return null
+     * @param idUserToFind id user To find
+     * @return UserDTO, if is successfully return UserDTO find, else, return null
      *
      */
     public UserDTO findUserById(String idUserToFind){
@@ -45,16 +43,14 @@ public class UserServices{
     }
 
     /**
-     *
-     * @param userDTO
-     * @return in the case of succesfuly, the function return the UserDTO to save, else, the function return null
-     *
-     * Here, the function validates that the password length is 8 characters or more for cerate a encript password and save the entitity whit
+     * Here, the function validates that the password length is 8 characters or more for create an encrypt password and save the entity with
      * the encrypt password
+     * @param userDTO info of user to create
+     * @return in the case of successfully, the function return the UserDTO to save, else, the function return null
      */
     public UserDTO createUser (UserDTO userDTO) {
-        //valida que el nombre no sea null o vacio 
-        if(userDTO.getName() == null ||  userDTO.getName().equals("")){
+        //validate the name is not empty
+        if(userDTO.getName() == null || userDTO.getName().isEmpty()){
             return null;
         }
         if(userDTO.getPhone() < 0 ){
@@ -67,11 +63,11 @@ public class UserServices{
         if(oldPassword.length() < 8){
             return null;
         }
-        String fortePasword  =  convertirSHA256(oldPassword);
-        userEntity.setPassword(fortePasword);
+        String fortePassword  =  stringToSHA256(oldPassword);
+        userEntity.setPassword(fortePassword);
         User userSave =this.repository.createUser(userEntity);
         if( userSave != null){
-            //Notificar al broker
+            //TODO notify the broker
             return this.modelMapper.map(userSave, UserDTO.class);
         }else {
             return null;
@@ -82,17 +78,14 @@ public class UserServices{
      *
      * @param idUserToUpdate id to the old User
      * @param userDTO new information of user
-     * @return in the case of succesfuly, the function return the UserDTO to save, else, the function return null
+     * @return in the case of successfully, the function return the UserDTO to save, else, the function return null
      */
     public UserDTO updateUser(String idUserToUpdate, UserDTO userDTO) {
-        //valida que el nombre no sea null o vacio 
-        if(userDTO.getName() == null ||  userDTO.getName().equals("")){
+        //validate the name is not empty
+        if(userDTO.getName() == null || userDTO.getName().isEmpty()){
             return null;
         }
         if(userDTO.getPhone() < 0 ){
-            return null;
-        }
-        if(idUserToUpdate.length() < 0 ){
             return null;
         }
 
@@ -105,8 +98,8 @@ public class UserServices{
 
     /**
      *
-     * @param idUserToDelete
-     * @returnin the case of succesfuly, the function return the UserDTO to save, else, the function return null
+     * @param idUserToDelete id of user to delete
+     * @return in the case of successfully, the function return the UserDTO to save, else, the function return null
      */
     public UserDTO deleteUser(String idUserToDelete) {
         User userEntity = this.repository.findUserById(idUserToDelete);
@@ -119,17 +112,17 @@ public class UserServices{
 
     /**
      *
-     * @param email
-     * @param password
-     * @return in the case of succesfuly, the function return the UserDTO to save, else, the function return null
+     * @param email email to find
+     * @param password password without encrypt to find
+     * @return in the case of successfully, the function return the UserDTO to save, else, the function return null
      */
     public UserDTO loginUser(String email, String password) {
         return this.modelMapper.map(this.repository.loginUser(email, password), UserDTO.class);
     }
 
 
-    public String convertirSHA256(String password) {
-        MessageDigest md = null;
+    public String stringToSHA256(String password) {
+        MessageDigest md;
         try {
             md = MessageDigest.getInstance("SHA-256");
         }
@@ -139,7 +132,7 @@ public class UserServices{
         }
 
         byte[] hash = md.digest(password.getBytes());
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         for(byte b : hash) {
             sb.append(String.format("%02x", b));
