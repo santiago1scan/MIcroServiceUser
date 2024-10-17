@@ -6,14 +6,16 @@ public class User {
     private String email;
     private String password;
     private String address;
+    private String rol;
     private int phone;
 
-    public User(String id, String name, String email, String password, String address, int phone) {
+    public User(String id, String name, String email, String password, String address, String rol, int phone) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
         this.address = address;
+        this.rol = rol;
         this.phone = phone;
     }
     public User(){
@@ -29,8 +31,7 @@ public class User {
     }
 
     public String getEmail() {
-        return email;
-
+         return email;
     }
 
     public String getPassword() {
@@ -40,6 +41,8 @@ public class User {
     public String getAddress() {
         return address;
     }
+
+    public String getRol() {return rol;}
 
     public int getPhone() {
         return phone;
@@ -64,6 +67,8 @@ public class User {
     public void setAddress(String address) {
         this.address = address;
     }
+
+    public void setRol(String rol) {this.rol = rol;}
 
     public void setPhone(int phone) {
         this.phone = phone;

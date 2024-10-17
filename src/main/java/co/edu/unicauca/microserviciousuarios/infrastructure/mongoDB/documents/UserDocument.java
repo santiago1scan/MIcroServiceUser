@@ -19,7 +19,9 @@ public class UserDocument {
     private String email;
     private String password;
     private String address;
+    private String rol;
     private int phone;
+    private boolean isActive;
 
 
     

@@ -18,6 +18,8 @@ public class UserServices{
 
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private co.edu.unicauca.microserviciousuarios.presentation.mapper.mapper mapper;
 
     @Autowired
     public UserServices(IUserRepository repository, ModelMapper modelMapper) {
@@ -34,7 +36,10 @@ public class UserServices{
     public UserDTO findUserById(String idUserToFind){
         User userEntity = this.repository.findUserById(idUserToFind);
         if(userEntity != null){
-                return this.modelMapper.map(userEntity, UserDTO.class);
+                UserDTO userWithoutPassword = modelMapper.map(userEntity, UserDTO.class);
+                userWithoutPassword.setPassword(null);
+                return userWithoutPassword;
+
         }
         return null;
     }
@@ -71,12 +76,12 @@ public class UserServices{
      * @return in the case of succesfuly, the function return the UserDTO to save, else, the function return null
      */
     public UserDTO updateUser(String idUserToUpdate, UserDTO userDTO) {
-        User userEntity = this.repository.findUserById(idUserToUpdate);
-        if(this.repository.updateUserById(idUserToUpdate, userEntity) != null){
-            return this.modelMapper.map(userDTO, UserDTO.class);
-        }else{
+
+        User userEntity = modelMapper.map(userDTO, User.class);
+        User userUpdated = this.repository.updateUserById(idUserToUpdate, userEntity);
+        if( userUpdated == null)
             return null;
-        }
+        return this.modelMapper.map(userUpdated, UserDTO.class);
     }
 
     /**

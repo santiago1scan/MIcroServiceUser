@@ -1,5 +1,6 @@
 package co.edu.unicauca.microserviciousuarios.presentation.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,6 +14,7 @@ public class UserDTO {
     private String email;
     private String password;
     private String address;
+    private String rol;
     private int phone;
 
     public UserDTO() {}

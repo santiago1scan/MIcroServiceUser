@@ -39,6 +39,8 @@ public class UserRepositoyMongo implements IUserRepository {
     @Override
     public User findUserById(String id){
         UserDocument userFounded = mongoRepository.findById(id).orElse(null);
+        if(userFounded==null)
+            return null;
         return UserMapper.toUser(userFounded);
     }
     @Override
@@ -56,7 +58,7 @@ public class UserRepositoyMongo implements IUserRepository {
             userDocument.setEmail(newUser.getEmail());
         if(!newUser.getPassword().equals(""))
             userDocument.setPassword(newUser.getPassword());
-        if(newUser.getAddress().equals(""))
+        if(!newUser.getAddress().equals(""))
             userDocument.setAddress(newUser.getAddress());
         if(newUser.getPhone() != 0)
             userDocument.setPhone(newUser.getPhone());

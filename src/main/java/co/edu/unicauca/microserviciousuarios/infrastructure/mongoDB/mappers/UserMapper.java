@@ -11,6 +11,7 @@ public class UserMapper {
                 userD.getEmail(),
                 userD.getPassword(),
                 userD.getAddress(),
+                userD.getRol(),
                 userD.getPhone()
         );
     }
@@ -21,7 +22,9 @@ public class UserMapper {
             user.getEmail(),
             user.getPassword(),
             user.getAddress(),
-            user.getPhone()
+            user.getRol(),
+            user.getPhone(),
+                true
         );
     }
 }

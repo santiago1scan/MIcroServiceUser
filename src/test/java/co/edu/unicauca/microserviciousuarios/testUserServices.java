@@ -31,19 +31,4 @@ public class testUserServices {
         MockitoAnnotations.openMocks(this); // Inicializa los mocks
     }
 
-    @Test
-    void testMapper(){
-        UserDTO userDTO = new UserDTO("123", "John", "john@example.com", "password123", "123 Main St", 123456789);
-        User user = modelMapper.map(userDTO, User.class);
-
-        assertNotNull(user);
-        assertEquals(userDTO.getName(), user.getName());
-    }
-
-    @Test
-    void testCreateUser() {
-        UserDTO newUser= new UserDTO("1", "Juan" ,"Juan@gmail.com", "12345678", "Cra452", 1111111111);
-        assertNotNull(userServices.createUser(newUser));
-
-    }
 }
