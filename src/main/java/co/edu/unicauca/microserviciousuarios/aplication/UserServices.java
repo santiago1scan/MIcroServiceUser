@@ -53,6 +53,15 @@ public class UserServices{
      * the encrypt password
      */
     public UserDTO createUser (UserDTO userDTO) {
+        //valida que el nombre no sea null o vacio 
+        if(userDTO.getName() == null ||  userDTO.getName().equals("")){
+            return null;
+        }
+        if(userDTO.getPhone() < 0 ){
+            return null;
+        }
+    
+
         User userEntity = this.modelMapper.map(userDTO, User.class);
         String oldPassword = userEntity.getPassword();
         if(oldPassword.length() < 8){
@@ -76,6 +85,16 @@ public class UserServices{
      * @return in the case of succesfuly, the function return the UserDTO to save, else, the function return null
      */
     public UserDTO updateUser(String idUserToUpdate, UserDTO userDTO) {
+        //valida que el nombre no sea null o vacio 
+        if(userDTO.getName() == null ||  userDTO.getName().equals("")){
+            return null;
+        }
+        if(userDTO.getPhone() < 0 ){
+            return null;
+        }
+        if(idUserToUpdate.length() < 0 ){
+            return null;
+        }
 
         User userEntity = modelMapper.map(userDTO, User.class);
         User userUpdated = this.repository.updateUserById(idUserToUpdate, userEntity);
