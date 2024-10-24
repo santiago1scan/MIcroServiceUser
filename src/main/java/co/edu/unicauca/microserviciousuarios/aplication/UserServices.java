@@ -3,6 +3,7 @@ package co.edu.unicauca.microserviciousuarios.aplication;
 
 import co.edu.unicauca.microserviciousuarios.domain.model.IUserRepository;
 import co.edu.unicauca.microserviciousuarios.domain.model.User;
+import co.edu.unicauca.microserviciousuarios.infrastructure.broker.rabbit.MessageProducer;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,8 @@ public class UserServices{
 
     @Autowired
     private ModelMapper modelMapper;
+
+    private MessageProducer producer;
 
     @Autowired
     public UserServices(IUserRepository repository, ModelMapper modelMapper) {
@@ -67,7 +70,9 @@ public class UserServices{
         userEntity.setPassword(fortePassword);
         User userSave =this.repository.createUser(userEntity);
         if( userSave != null){
-            //TODO notify the broker
+
+            producer.sendMessage(userDTO);
+
             return this.modelMapper.map(userSave, UserDTO.class);
         }else {
             return null;
