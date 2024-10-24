@@ -20,12 +20,14 @@ public class UserServices{
     @Autowired
     private ModelMapper modelMapper;
 
+    @Autowired
     private MessageProducer producer;
 
     @Autowired
-    public UserServices(IUserRepository repository, ModelMapper modelMapper) {
+    public UserServices(IUserRepository repository, ModelMapper modelMapper, MessageProducer producer) {
         this.modelMapper = modelMapper;
         this.repository = repository;
+        this.producer = producer;
     }
 
     /**
