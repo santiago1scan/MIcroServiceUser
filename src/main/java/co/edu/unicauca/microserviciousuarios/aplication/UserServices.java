@@ -19,7 +19,7 @@ public class UserServices{
 
     @Autowired
     private ModelMapper modelMapper;
-
+    @Autowired
     private MessageProducer producer;
 
     @Autowired
@@ -71,7 +71,7 @@ public class UserServices{
         User userSave =this.repository.createUser(userEntity);
         if( userSave != null){
 
-            producer.sendMessage(userDTO);
+            producer.sendMessage(this.modelMapper.map(userSave, UserDTO.class));
 
             return this.modelMapper.map(userSave, UserDTO.class);
         }else {
