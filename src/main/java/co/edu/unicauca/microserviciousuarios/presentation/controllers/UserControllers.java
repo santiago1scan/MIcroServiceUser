@@ -1,6 +1,7 @@
 package co.edu.unicauca.microserviciousuarios.presentation.controllers;
 
 import co.edu.unicauca.microserviciousuarios.aplication.UserServices;
+import co.edu.unicauca.microserviciousuarios.domain.model.exceptions.InvalidUserInformation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +16,7 @@ public class UserControllers {
     private UserServices userServices;
 
     @PostMapping
-    public ResponseEntity<Object> createUser(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<Object> createUser(@RequestBody UserDTO userDTO) throws InvalidUserInformation {
         if(userDTO.getName().isEmpty())
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
@@ -74,7 +75,7 @@ public class UserControllers {
     }
 
     @PutMapping("/{idUser}")
-    public ResponseEntity<Object> updateUser(@PathVariable String idUser, @RequestBody UserDTO userDTO) {
+    public ResponseEntity<Object> updateUser(@PathVariable String idUser, @RequestBody UserDTO userDTO) throws InvalidUserInformation {
         UserDTO userUpdated = userServices.updateUser(idUser, userDTO);
         if(userUpdated == null)
             return ResponseEntity
@@ -84,7 +85,7 @@ public class UserControllers {
     }
 
     @DeleteMapping("/{idUser}")
-    public ResponseEntity<Object> deleteUser(@PathVariable String idUser) {
+    public ResponseEntity<Object> deleteUser(@PathVariable String idUser) throws InvalidUserInformation {
         UserDTO userDTO = userServices.deleteUser(idUser);
         if( userDTO == null)
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

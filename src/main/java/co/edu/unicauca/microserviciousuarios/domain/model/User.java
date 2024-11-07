@@ -1,5 +1,7 @@
 package co.edu.unicauca.microserviciousuarios.domain.model;
 
+import co.edu.unicauca.microserviciousuarios.domain.model.exceptions.InvalidUserInformation;
+
 public class User {
     private String id;
     private String name;
@@ -9,7 +11,11 @@ public class User {
     private String rol;
     private int phone;
 
-    public User(String id, String name, String email, String password, String address, String rol, int phone) {
+    public User(String id, String name, String email, String password, String address, String rol, int phone) throws InvalidUserInformation {
+        validateName(name);
+        validateEmail(email);
+        validatePhone(phone);
+
         this.id = id;
         this.name = name;
         this.email = email;
@@ -20,6 +26,24 @@ public class User {
     }
     public User(){
 
+    }
+
+    private void validateName(String name) throws InvalidUserInformation {
+        if(name == null || name.isEmpty()){
+            throw new InvalidUserInformation("Name is null or empty");
+        }
+    }
+
+    private void validatePhone(int phone) throws InvalidUserInformation {
+        if(phone < 0){
+            throw new InvalidUserInformation("Phone number is negative");
+        }
+    }
+
+    private void validateEmail(String email) throws InvalidUserInformation {
+        if(email == null || email.isEmpty()){
+            throw new InvalidUserInformation("Email is null or empty");
+        }
     }
 
     public String getId() {
@@ -52,11 +76,13 @@ public class User {
         this.id = id;
     }
 
-    public void setName(String name) {
+    public void setName(String name) throws InvalidUserInformation {
+        validateName(name);
         this.name = name;
     }
 
-    public void setEmail(String email) {
+    public void setEmail(String email) throws InvalidUserInformation {
+        validateEmail(email);
         this.email = email;
     }
 
@@ -70,7 +96,8 @@ public class User {
 
     public void setRol(String rol) {this.rol = rol;}
 
-    public void setPhone(int phone) {
+    public void setPhone(int phone) throws InvalidUserInformation {
+        validatePhone(phone);
         this.phone = phone;
     }
 }

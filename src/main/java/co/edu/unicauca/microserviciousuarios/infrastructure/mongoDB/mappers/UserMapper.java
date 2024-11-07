@@ -1,10 +1,11 @@
 package co.edu.unicauca.microserviciousuarios.infrastructure.mongoDB.mappers;
 
 import co.edu.unicauca.microserviciousuarios.domain.model.User;
+import co.edu.unicauca.microserviciousuarios.domain.model.exceptions.InvalidUserInformation;
 import co.edu.unicauca.microserviciousuarios.infrastructure.mongoDB.documents.UserDocument;
 
 public class UserMapper {
-    public static User toUser(UserDocument userD){
+    public static User toUser(UserDocument userD) throws InvalidUserInformation {
         return new User(
                 userD.getId(),
                 userD.getName(),

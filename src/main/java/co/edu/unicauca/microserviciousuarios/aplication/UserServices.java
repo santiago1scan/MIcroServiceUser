@@ -3,7 +3,10 @@ package co.edu.unicauca.microserviciousuarios.aplication;
 
 import co.edu.unicauca.microserviciousuarios.domain.model.IUserRepository;
 import co.edu.unicauca.microserviciousuarios.domain.model.User;
+import co.edu.unicauca.microserviciousuarios.domain.model.exceptions.InvalidUserInformation;
 import co.edu.unicauca.microserviciousuarios.infrastructure.broker.rabbit.MessageProducer;
+import co.edu.unicauca.microserviciousuarios.infrastructure.exceptions.DataBaseError;
+import co.edu.unicauca.microserviciousuarios.infrastructure.exceptions.DuplicateInformation;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,15 +38,11 @@ public class UserServices{
      * @return UserDTO, if is successfully return UserDTO find, else, return null
      *
      */
-    public UserDTO findUserById(String idUserToFind){
+    public UserDTO findUserById(String idUserToFind) throws InvalidUserInformation {
         User userEntity = this.repository.findUserById(idUserToFind);
-        if(userEntity != null){
-                UserDTO userWithoutPassword = modelMapper.map(userEntity, UserDTO.class);
-                userWithoutPassword.setPassword(null);
-                return userWithoutPassword;
-
-        }
-        return null;
+        UserDTO userWithoutPassword = modelMapper.map(userEntity, UserDTO.class);
+        userWithoutPassword.setPassword(null);
+        return userWithoutPassword;
     }
 
     /**
@@ -52,32 +51,20 @@ public class UserServices{
      * @param userDTO info of user to create
      * @return in the case of successfully, the function return the UserDTO to save, else, the function return null
      */
-    public UserDTO createUser (UserDTO userDTO) {
-        //validate the name is not empty
-        if(userDTO.getName() == null || userDTO.getName().isEmpty()){
-            return null;
-        }
-        if(userDTO.getPhone() < 0 ){
-            return null;
-        }
-    
+    public UserDTO createUser (UserDTO userDTO) throws InvalidUserInformation, DataBaseError, DuplicateInformation {
 
         User userEntity = this.modelMapper.map(userDTO, User.class);
         String oldPassword = userEntity.getPassword();
-        if(oldPassword.length() < 8){
-            return null;
-        }
+
         String fortePassword  =  stringToSHA256(oldPassword);
         userEntity.setPassword(fortePassword);
+
         User userSave =this.repository.createUser(userEntity);
-        if( userSave != null){
 
-            producer.sendMessage(this.modelMapper.map(userSave, UserDTO.class));
+        producer.sendMessage(this.modelMapper.map(userSave, UserDTO.class));
 
-            return this.modelMapper.map(userSave, UserDTO.class);
-        }else {
-            return null;
-        }
+        return this.modelMapper.map(userSave, UserDTO.class);
+
     }
 
     /**
@@ -86,19 +73,10 @@ public class UserServices{
      * @param userDTO new information of user
      * @return in the case of successfully, the function return the UserDTO to save, else, the function return null
      */
-    public UserDTO updateUser(String idUserToUpdate, UserDTO userDTO) {
-        //validate the name is not empty
-        if(userDTO.getName() == null || userDTO.getName().isEmpty()){
-            return null;
-        }
-        if(userDTO.getPhone() < 0 ){
-            return null;
-        }
+    public UserDTO updateUser(String idUserToUpdate, UserDTO userDTO) throws InvalidUserInformation {
 
         User userEntity = modelMapper.map(userDTO, User.class);
         User userUpdated = this.repository.updateUserById(idUserToUpdate, userEntity);
-        if( userUpdated == null)
-            return null;
         return this.modelMapper.map(userUpdated, UserDTO.class);
     }
 
@@ -107,13 +85,10 @@ public class UserServices{
      * @param idUserToDelete id of user to delete
      * @return in the case of successfully, the function return the UserDTO to save, else, the function return null
      */
-    public UserDTO deleteUser(String idUserToDelete) {
+    public UserDTO deleteUser(String idUserToDelete) throws InvalidUserInformation {
         User userEntity = this.repository.findUserById(idUserToDelete);
-        if(this.repository.deleteUserById(idUserToDelete) != null){
-            return this.modelMapper.map(userEntity, UserDTO.class);
-        }else{
-            return null;
-        }
+        this.repository.deleteUserById(idUserToDelete);
+        return this.modelMapper.map(userEntity, UserDTO.class);
     }
 
     /**
@@ -122,7 +97,7 @@ public class UserServices{
      * @param password password without encrypt to find
      * @return in the case of successfully, the function return the UserDTO to save, else, the function return null
      */
-    public UserDTO loginUser(String email, String password) {
+    public UserDTO loginUser(String email, String password) throws InvalidUserInformation {
         return this.modelMapper.map(this.repository.loginUser(email, password), UserDTO.class);
     }
 
